@@ -1,20 +1,29 @@
 import React from 'react'
 
-    const Contacts = ({ contacts,detail }) => {
+    const Contacts = ({ contacts,web_name,displayUrl,snippet}) => {
+
+      
+      const item =[]
+
+      for (let i = 0; i < contacts.length; i++) {
+       
+        item.push(
+        <div className="container">
+              <div className="card-body">
+                            <a href={contacts[i]} >{web_name[i]}</a>
+                            <p style={{ color: 'green' }}>{displayUrl[i]}</p>
+                            <p>{snippet[i]}</p>
+     
+              </div>
+        
+        </div>)
+      }
+     
       return (
         <div>
-          <center>
-            
-            
-   
-              {contacts.map(item => (
-                <div className="card">
-                    <div className="card-body">
-                                        <h6 className="card-title"><a href={item}>{item}</a></h6>
-                    </div>
-                </div>
-                                        ))}
-          </center>
+          
+            {item}
+          
         </div>
       )
     };
