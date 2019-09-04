@@ -2,7 +2,7 @@ import React from 'react'
 
     const AutoSuggest = ({ suggestWord}) => {
 
-      console.log(suggestWord)
+      //console.log(suggestWord)
       
       const item =[]
 

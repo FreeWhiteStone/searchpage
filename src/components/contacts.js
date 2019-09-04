@@ -1,8 +1,28 @@
 import React from 'react'
 
-    const Contacts = ({ contacts,web_name,displayUrl,snippet}) => {
+    const Contacts = ({ contacts,web_name,displayUrl,snippet,imagesUrl,tumImages, imagesFor}) => {
 
-      
+      const images = []
+
+     console.log(imagesFor)
+
+      for (let i = 0; i < imagesUrl.length/4; i++) {
+       
+        images.push(
+          
+        <div className="container">
+         
+         <a href={imagesUrl[i]} ><img style={{ float:"left" }} src={imagesUrl[i]} width={120} height={100} mode='fit'alt="new"></img></a>
+               
+
+               
+        </div>
+        
+        )
+      }
+
+
+
       const item =[]
 
       for (let i = 0; i < contacts.length; i++) {
@@ -21,8 +41,19 @@ import React from 'react'
      
       return (
         <div>
-          
-            {item}
+            <div className="container" style={{ float: 'left' }}>
+              
+              <a href={tumImages} >{imagesFor}</a>
+                
+                  {images}
+                
+            </div>
+
+            <div style={{ float: 'relative' }}>
+              
+                 {item}
+
+            </div>
           
         </div>
       )

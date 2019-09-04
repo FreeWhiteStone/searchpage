@@ -19,8 +19,17 @@ class App extends Component {
     offset : 0,
     idsi : 1,
     searchSuggestionsArray : [],
+    pageClassName : "",
+    isVisible : "shown",
+    imagesUrl : [],
+    tumImages : "",
+    imagesFor : "",
+
   }
- 
+  sayHello =() => {
+    
+    this.setState({ isVisible: "hidden"})
+  }
   componentDidMount (e) {
          let tempSuggArr = [];
     var request = require("request");
@@ -29,15 +38,15 @@ class App extends Component {
       url: 'https://api.cognitive.microsoft.com/bing/v7.0/suggestions',
       qs: { q : this.state.searchKey},
       headers: 
-       { 'cache-control': 'no-cache',
-         Connection: 'keep-alive',
-         'Accept-Encoding': 'gzip, deflate',
-         Host: 'api.cognitive.microsoft.com',
-         'Postman-Token': 'd52df569-1084-4f77-9558-4cf6bb39ed77,d4b84bf5-23fc-4fde-b34e-fffb4d304830',
-         'Cache-Control': 'no-cache',
-         Accept: '*/*',
-         'User-Agent': 'PostmanRuntime/7.15.2',
-         'Ocp-Apim-Subscription-Key': 'f873c9adcaa94d18ad0778c5f2ff222b' } };
+      { 'cache-control': 'no-cache',
+      Connection: 'keep-alive',
+      'Accept-Encoding': 'gzip, deflate',
+      Host: 'api.cognitive.microsoft.com',
+      'Postman-Token': '72654749-4fe5-4ad6-9af0-83e17067847d,6c739254-0fbd-4df5-b235-95b8bcb466bc',
+      'Cache-Control': 'no-cache',
+      Accept: '*/*',
+      'User-Agent': 'PostmanRuntime/7.16.3',
+      'Ocp-Apim-Subscription-Key': '1616861c0aea466ca23683fdeb513ca2' } };
     
     request(options, function (error, response, body) {
       
@@ -47,13 +56,13 @@ class App extends Component {
         //console.log("ilk parse")
 
         let apiBody = JSON.parse(body);
-        console.log(apiBody)
+        //console.log(apiBody)
 
         let suggestCount = apiBody.suggestionGroups[0].searchSuggestions.length;
-        console.log(suggestCount)
+        //console.log(suggestCount)
 
         if(suggestCount === 0){
-          console.log("bos sugg")
+         // console.log("bos sugg")
           this.setState({ searchSuggestionsArray: tempSuggArr})
         }
         else{
@@ -76,33 +85,37 @@ class App extends Component {
 
  handleClick = (e) => {
 
-  if(e.target.id === 1){
+  var tempId = parseInt(e.target.id);
 
-    this.setState({
-      offset : 0
-    });
-
-
-    console.log("zaten 1")
-  } else{
-
-    this.setState({
-      idsi : parseInt(e.target.id)
+  
+  this.setState({
+    pageClassName : "d-block bg-primary text-white"
   });
 
-var tempID =  this.state.idsi;
 
-this.setState({
-  offset : parseInt(tempID *10)
-});
+  if(tempId === 1){
 
-this.onWordSubmit(e);
+    this.setState({
+      idsi : tempId,
+      offset : 0
+    });
+        console.log("id:", this.state.idsi ," offset", this.state.offset)
+        this.onWordSubmit(e);
+
+  } else{
+
+          this.setState({
+            idsi : tempId,
+            offset : parseInt((this.state.idsi-1) *10)
+        });
+        console.log("id:", this.state.idsi ," offset", this.state.offset)
+      this.onWordSubmit(e);
 
 
   }
       
       
-  console.log(this.state.offset)
+  //console.log(this.state.offset)
 }
   
 
@@ -117,12 +130,12 @@ onWordChange(e){
 }
 onWordSubmit(e){
 
-  console.log("is aaaaaaaaaa")
-    
     let tempArray = [];
     let tempName = [];
     let tempDispUrl_arr = [];
     let tempSnip_arr = [];
+    let tempImg = [];
+
     
    
             var request = require("request");
@@ -134,15 +147,15 @@ onWordSubmit(e){
                 count : this.state.count,
                 offset : this.state.offset},
               headers: 
-               { 'cache-control': 'no-cache',
-                 Connection: 'keep-alive',
-                 'Accept-Encoding': 'gzip, deflate',
-                 Host: 'api.cognitive.microsoft.com',
-                 'Postman-Token': 'd52df569-1084-4f77-9558-4cf6bb39ed77,d4b84bf5-23fc-4fde-b34e-fffb4d304830',
-                 'Cache-Control': 'no-cache',
-                 Accept: '*/*',
-                 'User-Agent': 'PostmanRuntime/7.15.2',
-                 'Ocp-Apim-Subscription-Key': 'f873c9adcaa94d18ad0778c5f2ff222b' } };
+              { 'cache-control': 'no-cache',
+              Connection: 'keep-alive',
+              'Accept-Encoding': 'gzip, deflate',
+              Host: 'api.cognitive.microsoft.com',
+              'Postman-Token': '72654749-4fe5-4ad6-9af0-83e17067847d,6c739254-0fbd-4df5-b235-95b8bcb466bc',
+              'Cache-Control': 'no-cache',
+              Accept: '*/*',
+              'User-Agent': 'PostmanRuntime/7.16.3',
+              'Ocp-Apim-Subscription-Key': '1616861c0aea466ca23683fdeb513ca2' } };
             
             request(options, function (error, response, body) {
               
@@ -155,16 +168,19 @@ onWordSubmit(e){
                 //console.log("ilk parse")
 
                 let apiBody = JSON.parse(body);
-                //console.log(response)
+                console.log(apiBody)
 
               let webLeng = apiBody.webPages.value.length;
 
-              
+              var contains = apiBody.webPages.value[4].displayUrl.includes("twitter")
+              console.log(contains)
+
               for (let i = 0; i < webLeng; i++) {
                     let temp_web = apiBody.webPages.value[i].url;
                     let temp_web_name = apiBody.webPages.value[i].name;
                     let temp_disp_url = apiBody.webPages.value[i].displayUrl;
                     let temp_snip = apiBody.webPages.value[i].snippet;
+
 
                     tempArray.push(temp_web);
                     tempName.push(temp_web_name);
@@ -174,20 +190,43 @@ onWordSubmit(e){
 
                   }
 
-            /*
-            let imageLeng = apiBody.images.value.length;
+            
+               
 
+               console.log(!apiBody.images)
+               if( !apiBody.images === true )
+               {
+                 console.log("yook")
+               }else{
+                for (let i = 0; i < apiBody.images.value.length; i++) {
+                  let temp_img = apiBody.images.value[i].contentUrl;
+                  tempImg.push(temp_img)
+                  
+                  
+              } 
+              var tempImgFor = "Images for " + this.state.searchKey;
+              
+              this.setState({tumImages : apiBody.images.webSearchUrl})
+              this.setState({imagesFor : tempImgFor})
+             
+
+               }
+
+             
+/*
               for (let i = 0; i < imageLeng; i++) {
-                    let temp_img = apiBody.images.value[i].hostPageUrl;
-                    tempArray.push(temp_img);
-                }*/ 
-                  this.setState({ contacts: tempArray})
+                    let temp_img = apiBody.images.value[i].contentUrl;
+                    tempImg.push(temp_img)
+                    
+                } 
+  */              this.setState({ contacts: tempArray})
                   this.setState({ web_name: tempName})
                   this.setState({ displayUrl: tempDispUrl_arr})
                   this.setState({ snippet: tempSnip_arr})
+                  this.setState({pageClassName : ""})
+                  this.setState({imagesUrl : tempImg})
 
-
-
+                 
               }
               
                  
@@ -197,13 +236,14 @@ onWordSubmit(e){
     e.preventDefault();
 }
 
+
   render() {
 
 
     const {searchKey} = this.state;
-    const {searchSuggestionsArray} = this.state;
-    console.log(searchKey)
-    console.log(searchSuggestionsArray)
+    //const {searchSuggestionsArray} = this.state;
+
+    console.log(this.state.tumImages)
     
     return (
       <div className="container">
@@ -216,7 +256,7 @@ onWordSubmit(e){
                
                 <div>
                     <form onSubmit = {this.onWordSubmit.bind(this)}>
-                        <div className = "form-group">
+                        <div className = "form-group" >
                             
                             <input
                                 type = "text"
@@ -231,30 +271,32 @@ onWordSubmit(e){
                                 
                                 
                             />
+                            
                             <AutoSuggest suggestWord={this.state.searchSuggestionsArray}></AutoSuggest>
                             
                         </div>
                         
-                        <button type = "submit" className = "btn btn-danger">Search</button>
+                        <button type = "submit" className = "btn btn-danger" onClick={this.sayHello}>Search</button>
 
                     </form>
                     </div>
-                    <Contacts contacts={this.state.contacts} web_name={this.state.web_name} displayUrl={this.state.displayUrl} snippet={this.state.snippet}/>
-
+                    <Contacts
+                        contacts={this.state.contacts}
+                        web_name={this.state.web_name}
+                        displayUrl={this.state.displayUrl}
+                        snippet={this.state.snippet}
+                        imagesUrl={this.state.imagesUrl}
+                        tumImages={this.state.tumImages}
+                        imagesFor={this.state.imagesFor}
+                    />
+                    
                     <div className={styles.pagination}>
-                    <div className={styles.app}>
-
-
-        <div className={styles.pagination}>
-          <span>&laquo;</span>
-          <span id={1} className={styles.active} onClick={this.onWordSubmit}>1</span>
-          <span id={2} onClick={this.handleClick}>2</span>
-          <span id={3} onClick={this.handleClick}>3</span>
-          <span id={4} onClick={this.handleClick}>4</span>
-        </div>
-
-      </div>
-        </div>
+                          
+                          <span id={1} className={this.state.pageClassName} onClick={this.handleClick}>1</span>
+                          <span id={2} className={this.state.pageClassName} onClick={this.handleClick}>2</span>
+                          <span id={3} className={this.state.pageClassName} onClick={this.handleClick}>3</span>
+                          <span id={4} className={this.state.pageClassName} onClick={this.handleClick}>4</span>
+                    </div>
         
       </div>
       
